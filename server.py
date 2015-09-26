@@ -11,7 +11,7 @@ class PrintServer():
 
     def run(self):
         print 'establishing connection to Twitter API'
-        params = {'follow':twitter_api_params['printer_handle'], 'track':'print'}
+        params = {'follow':twitter_api_params['printer_handle'], 'track':'print', 'stringify_friend_ids':'true'}
         response = self.session.get(url=twitter_api_params['url'], auth=self.auth, params=params, stream=True)
         for line in response.iter_lines():
             with open('posts.json', 'wb+') as fw:
