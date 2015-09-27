@@ -10,8 +10,8 @@ Usage:
     Step 4: Enter the https://github.com/rtrad/hashtagprint as the description link
     Step 5: Go to the Keys and Access Tokens tab and generate your Access Token
     Step 6: Note the Consumer Key (API Key), Consumer Secret (API Secret), Access Token, Access Token Secret
-    Step 7: Run the .exe file and paste these values under their respective names
-    Step 8: In the .exe file paste the twitter handle for your printer, the name of the printer device that you are going to use to print (This can be found in the control pannel) and also your own twitter handle(as the super user)
+    Step 7: Run the start.py file and paste these values under their respective names
+    Step 8: In the GUI paste the twitter handle for your printer, the name of the printer device that you are going to use to print (This can be found in the control pannel) and also your own twitter handle(as the super user)
     Step 9: Press Configure and Run to start printing
 
 Dependencies:
@@ -23,4 +23,4 @@ Dependencies:
     Python image library: http://www.pythonware.com/products/pil/
     wkhtmltopdf: http://wkhtmltopdf.org/downloads.html
 
-Launch hashtagprint.exe
+Launch start.py
