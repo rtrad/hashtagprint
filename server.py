@@ -11,6 +11,7 @@ import tempfile
 import time
 import win32api
 import win32ui
+import pdfkit
 from PIL import Image, ImageWin
 
 
@@ -69,6 +70,13 @@ class PrintServer():
                     self._print_img(post, copies, post.getRaw()['extended_entities']['media'][0]['media_url'])
                 else:
                     params = {'status':'{1} @{0}, you must attach an image to use #img'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))}
+                    requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
+                return
+            elif 'web' in hashtags:
+                if 'urls' in post.getRaw():
+                    self._print_web(post.getRaw()['urls'][0]['display_url'])
+                else:
+                    params = {'status':'{1} @{0}, you must include a url for #web'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))}
                     requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
                 return
         return
@@ -175,6 +183,14 @@ class PrintServer():
             hDC.DeleteDC ()
         return
 
+    def _print_web(self, url):
+        print 'printing webpage...'
+        filename = tempfile.mktemp('web.pdf')
+        pdfkit.from_url(url, filename)
+        for i in range(0,copies):]
+            win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
+        return
+        
     def load_users(self, users_file):
         self.users_file = users_file
         print 'loading list of valid users...\n'
