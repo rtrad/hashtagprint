@@ -131,8 +131,8 @@ class PrintServer():
             r = requests.get(img_url, stream=True)
             if r.status_code == 200:
                 with open(filename, 'wb') as f:
-                    r.raw.decode_content = True
-                    shutil.copyfileobj(r.raw, f) 
+                    for chunk in r:
+                        f.write(chunk)
             open(filename, "w").write (r.content)
             win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
         return
