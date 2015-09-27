@@ -73,8 +73,8 @@ class PrintServer():
                     requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
                 return
             elif 'web' in hashtags:
-                if 'urls' in post.getRaw():
-                    self._print_web(post.getRaw()['urls'][0]['display_url'])
+                if 'entities' in post.getRaw() and 'urls' in post.getRaw()['entities']:
+                    self._print_web(post.getRaw()['entities']['urls'][0]['display_url'])
                 else:
                     params = {'status':'{1} @{0}, you must include a url for #web'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))}
                     requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
