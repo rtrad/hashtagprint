@@ -51,7 +51,7 @@ class PrintServer():
                     copies = int(post.getAfterTag('copy').strip())
                 except:
                     params = {'status':'@{0}, text after #copy must be an integer number'.format(post.getSender())}
-                    stream = requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
+                    requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
             if 'raw' in hashtags:
                 _print_raw()
             #'pdf' in hashtags and 'img' in hashtag and 'web' in 
@@ -61,11 +61,11 @@ class PrintServer():
         if sender.lower() == config.super_sender:
             params1 = {'status':'@{0}, #print creates a new print job; use #raw, #pdf, #img, or #web to specify the doc type; #copy specifies number of copies (must be the LAST argument)'.format(sender)}
             params2 = {'status':'@{0}, #grant gives print access to anyone mentioned; #revoke revokes access to anyone mentioned'.format(sender)}
-            stream = requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params1)
-            stream = requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params2)
+            requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params1)
+            requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params2)
         else:
             params1 = {'status':'@{0}, #print creates a new print job; use #raw, #pdf, #img, or #web to specify the doc type; #copy specifies number of copies (must be the LAST argument)'.format(sender)}
-            stream = requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params1)
+            requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params1)
         print 'sent help data to {0}'.format(sender)
         return
         
@@ -77,7 +77,7 @@ class PrintServer():
                 if user not in self.valid_users:
                     self.valid_users.append(user)
                     params = {'status':'@{0}, you have just given @{1} access to use your printer'.format(post.getSender(), user)}
-                    stream = requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
+                    requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
             print 'granted access for the following users: {0}'.format(mentions)
         return
         
@@ -89,7 +89,7 @@ class PrintServer():
                 if user in self.valid_users:
                     self.valid_users.remove(user)
                     params = {'status':'@{0}, @{1} no longer has access to use your printer'.format(post.getSender(), user)}
-                    stream = requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
+                    requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
             print 'revoked access for the following users: {0}'.format(mentions)
         return
 
