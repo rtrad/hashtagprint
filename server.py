@@ -189,8 +189,18 @@ class PrintServer():
     def _print_web(self, url, copies):
         print 'printing webpage...'
         filename = tempfile.mktemp('web.pdf')
-        pdfkit.from_url(url, filename)
-        for i in range(0,copies):
+        if '.pdf' not in url:
+            pdfkit.from_url(url, filename)
+            for i in range(0,copies):
+                win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
+        else:
+            r = requests.get(url, stream=True)
+            with open(filename, 'wb+') as handle:
+                response = requests.get(img_url, stream=True)
+                if not response.ok:
+                    print 'fail'
+                for block in response.iter_content(1024):
+                    handle.write(block)
             win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
         params = {'status':'{1} @{0}, your document was sent to the printer at {2}'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)), time.time)}
         requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
