@@ -6,10 +6,11 @@ import thread
 import random
 import string
 from requests_oauthlib import OAuth1
+import win32print
 
 class PrintServer():
     def __init__(self, consumer_key=config.consumer_key, consumer_secret=config.consumer_secret, access_token=config.access_token, access_token_secret=config.access_token_secret):
-        print '\n\n***************Hashtag Print***************\n\n\ninitializing printer server...\n'
+        print '\n\n___________________# Print___________________\n\n\ninitializing printer server...\n'
         self.auth = OAuth1(consumer_key, consumer_secret, access_token, access_token_secret)
         self.session = requests.Session()
 
@@ -55,7 +56,7 @@ class PrintServer():
                     params = {'status':'{1} @{0}, text after #copy must be an integer number'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))}
                     requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
             if 'raw' in hashtags:
-                _print_raw()
+                _print_raw(post, copies)
             #'pdf' in hashtags and 'img' in hashtag and 'web' in 
         return
 
@@ -105,8 +106,20 @@ class PrintServer():
                 writer.write('{0}\n'.format(item))
         return
     
-    def _print_raw(self, post):
-        print 'printing'
+    def _print_raw(self, post, copies):
+        print 'printing raw text...'
+        hPrinter = win32print.OpenPrinter(config.printer_name)
+        for i in range(0,copies):
+            try:
+                hJob = win32print.StartDocPrinter (hPrinter, 1, ("test of raw data", None, "RAW"))
+                try:
+                    win32print.StartPagePrinter (hPrinter)
+                    win32print.WritePrinter (hPrinter, post.getUntaggedText())
+                    win32print.EndPagePrinter (hPrinter)
+                finally:
+                    win32print.EndDocPrinter (hPrinter)
+            finally:
+                win32print.ClosePrinter(hPrinter)
         return
 
     def load_users(self, users_file):
@@ -136,7 +149,7 @@ class PrintServer():
             if line:
                 post = json.loads(line)
                 if self._is_valid_post(post):
-                    print 'post recieved:\n\ttext: {0}'.format(post['text'])
+                    print 'post recieved:\n\ttext: {0}\n'.format(post['text'])
                     post = Post(post, self.printer)               
                     self._parse_post(post)
 
@@ -163,6 +176,9 @@ class Post():
         return self.urls
     def getUntaggedText(self):
         output = self.text
+        for tag in self.hashtags:
+            if tag['text'] == 'copy':
+                output = output[:tag['indices'][0]]
         for hashtag in self.hashtags:
             output = output[:hashtag['indices'][0]] + output[hashtag['indices'][1]:]
         for mention in self.mentions:
