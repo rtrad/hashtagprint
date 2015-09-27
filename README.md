@@ -1,4 +1,5 @@
-hashtagprint
+#HashtagPrint
+
 Using the Twitter API to send documents to any printer, web-enabled or not
 
 Usage:
@@ -14,6 +15,7 @@ Usage:
     Step 9: Press Configure and Run to start printing
 
 Dependencies:
+
     pip install requests
     pip install requests_oauthlib
     pip install pdfkit
