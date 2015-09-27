@@ -7,6 +7,8 @@ import random
 import string
 from requests_oauthlib import OAuth1
 import win32print
+import tempfile
+import win32api
 
 class PrintServer():
     def __init__(self, consumer_key=config.consumer_key, consumer_secret=config.consumer_secret, access_token=config.access_token, access_token_secret=config.access_token_secret):
