@@ -59,19 +59,22 @@ class PrintServer():
                     requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
             if 'raw' in hashtags:
                 self._print_raw(post, copies)
-            #'pdf' in hashtags and 'img' in hashtag and 'web' in 
+                return
+            elif 'img' in hashtag:
+                self._print_img(post, copies)
+                return
         return
 
     def _help(self, sender):
         if sender.lower() == config.super_sender:
-            params1 = {'status':'{1} @{0}, #print creates a new print job; use #raw, #pdf, #img, or #web to specify file type'.format(sender, ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))[:140]}
+            params1 = {'status':'{1} @{0}, #print creates a new print job; use #raw, #img, or #web to specify file type'.format(sender, ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))[:140]}
             params2 = {'status':'{1} @{0}, #copy specifies number of copies you would like to print'.format(sender, ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))[:140]}
             params3 = {'status':'{1} @{0}, #grant gives print access to anyone mentioned; #revoke revokes access'.format(sender, ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))[:140]}
             requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params1)
             requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params2)
             requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params3)
         else:
-            params1 = {'status':'{1} @{0}, #print creates a new print job; use #raw, #pdf, #img, or #web to specify file type'.format(sender, ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))[:140]}
+            params1 = {'status':'{1} @{0}, #print creates a new print job; use #raw, #img, or #web to specify file type'.format(sender, ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))[:140]}
             params2 = {'status':'{1} @{0}, #copy specifies number of copies you would like to print'.format(sender, ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))[:140]}
             requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params1)
             requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params2)
@@ -116,6 +119,14 @@ class PrintServer():
             win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
         return
 
+    def _print_img(self, post, copies):
+        print 'printing image...'
+        for i in range(0,copies):
+            filename = tempfile.mktemp ("-img.")
+            open (filename, "w").write (post.getUntaggedText('raw'))
+            win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
+        return
+
     def load_users(self, users_file):
         self.users_file = users_file
         print 'loading list of valid users...\n'
@@ -143,6 +154,7 @@ class PrintServer():
             if line:
                 post = json.loads(line)
                 if self._is_valid_post(post):
+                    print post
                     print 'post recieved:\n\ttext: {0}\n'.format(post['text'])
                     post = Post(post, self.printer)               
                     self._parse_post(post)
