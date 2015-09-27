@@ -127,10 +127,8 @@ class PrintServer():
         print 'printing image...'
         for i in range(0,copies):
             r = requests.get(img_url, stream=True)
-            print img_url
             filename = 'test.jpg'#tempfile.mktemp ("-img.jpg")
-            for chunk in r.iter_content():
-                open(filename, "w").write (chunk)
+            open(filename, "w").write (r.content)
             win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
         return
 
