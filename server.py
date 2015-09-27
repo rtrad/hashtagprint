@@ -9,6 +9,7 @@ from requests_oauthlib import OAuth1
 import win32print
 import tempfile
 import win32api
+import shutil.copy
 
 class PrintServer():
     def __init__(self, consumer_key=config.consumer_key, consumer_secret=config.consumer_secret, access_token=config.access_token, access_token_secret=config.access_token_secret):
@@ -61,7 +62,11 @@ class PrintServer():
                 self._print_raw(post, copies)
                 return
             elif 'img' in hashtag:
-                self._print_img(post, copies)
+                if 'extended_entities' in post.getRaw() and 'media' in post.getRaw()['extended_entities'] and 'media_url' in post.getRaw()['extended_entities']['media'][0]:
+                    self._print_img(post, copies, post.getRaw()['extended_entities']['media'][0]['media_url'])
+                else:
+                    params = {'status':'{1} @{0}, you must attach an image to use #img'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))}
+                    requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
                 return
         return
 
@@ -119,11 +124,13 @@ class PrintServer():
             win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
         return
 
-    def _print_img(self, post, copies):
+    def _print_img(self, post, copies, img_url):
         print 'printing image...'
         for i in range(0,copies):
-            filename = tempfile.mktemp ("-img.")
-            open (filename, "w").write (post.getUntaggedText('raw'))
+            r = requests.get(img_url, stream=True)
+            filename = tempfile.mktemp ("-img.jpg")
+            for chunk in r.iter_content():
+                open(filename, "w").write (chunk)
             win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
         return
 
@@ -162,11 +169,14 @@ class PrintServer():
 
 class Post():
     def __init__(self, post, printer):
+        self.raw = post
         self.sender = post['user']['screen_name']
         self.text = post['text']
         self.hashtags = post['entities']['hashtags']
         self.user_mentions = [user for user in post['entities']['user_mentions'] if user['id'] != printer['id']]
         self.urls = post['entities']['urls']
+    def getRaw(self):
+        return self.raw
     def getSender(self):
         return self.sender
     def getText(self):
