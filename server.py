@@ -8,6 +8,7 @@ import string
 from requests_oauthlib import OAuth1
 import win32print
 import tempfile
+import shutil
 import win32api
 
 class PrintServer():
@@ -126,8 +127,12 @@ class PrintServer():
     def _print_img(self, post, copies, img_url):
         print 'printing image...'
         for i in range(0,copies):
-            r = requests.get(img_url, stream=True)
             filename = 'test.jpg'#tempfile.mktemp ("-img.jpg")
+            r = requests.get(img_url, stream=True)
+            if r.status_code == 200:
+                with open(filename, 'wb') as f:
+                    r.raw.decode_content = True
+                    shutil.copyfileobj(r.raw, f) 
             open(filename, "w").write (r.content)
             win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
         return
