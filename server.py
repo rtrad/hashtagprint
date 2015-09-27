@@ -139,8 +139,8 @@ class PrintServer():
                 for block in response.iter_content(1024):
                     handle.write(block)
             time.sleep(5)
-            img = Image.open(filename).save(filename2)
-            win32api.ShellExecute (0,"printto",filename2,'"{0}"'.format(config.printer_name),".",0)
+            Image.open(filename).save('temp.bmp')
+            win32api.ShellExecute (0,"printto",'temp.bmp','"{0}"'.format(config.printer_name),".",0)
         return
 
     def load_users(self, users_file):
