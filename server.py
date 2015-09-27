@@ -187,7 +187,7 @@ class PrintServer():
         print 'printing webpage...'
         filename = tempfile.mktemp('web.pdf')
         pdfkit.from_url(url, filename)
-        for i in range(0,copies):]
+        for i in range(0,copies):
             win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
         return
         
