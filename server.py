@@ -197,7 +197,7 @@ class PrintServer():
         else:
             r = requests.get(url, stream=True)
             with open(filename, 'wb+') as handle:
-                response = requests.get(img_url, stream=True)
+                response = requests.get(url, stream=True)
                 if not response.ok:
                     print 'fail'
                 for block in response.iter_content(1024):
