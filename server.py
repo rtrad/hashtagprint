@@ -10,7 +10,8 @@ import win32print
 import tempfile
 import time
 import win32api
-from PIL import Image
+import win32ui
+from PIL import Image, ImageWin
 
 
 class PrintServer():
