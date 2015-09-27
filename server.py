@@ -9,7 +9,6 @@ from requests_oauthlib import OAuth1
 import win32print
 import tempfile
 import win32api
-import shutil.copy
 
 class PrintServer():
     def __init__(self, consumer_key=config.consumer_key, consumer_secret=config.consumer_secret, access_token=config.access_token, access_token_secret=config.access_token_secret):
@@ -61,7 +60,7 @@ class PrintServer():
             if 'raw' in hashtags:
                 self._print_raw(post, copies)
                 return
-            elif 'img' in hashtag:
+            elif 'img' in hashtags:
                 if 'extended_entities' in post.getRaw() and 'media' in post.getRaw()['extended_entities'] and 'media_url' in post.getRaw()['extended_entities']['media'][0]:
                     self._print_img(post, copies, post.getRaw()['extended_entities']['media'][0]['media_url'])
                 else:
@@ -128,7 +127,7 @@ class PrintServer():
         print 'printing image...'
         for i in range(0,copies):
             r = requests.get(img_url, stream=True)
-            filename = tempfile.mktemp ("-img.jpg")
+            filename = 'test.jpg'#tempfile.mktemp ("-img.jpg")
             for chunk in r.iter_content():
                 open(filename, "w").write (chunk)
             win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
