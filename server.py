@@ -181,7 +181,7 @@ class Post():
                 output = output[:tag['indices'][0]]
         for hashtag in self.hashtags:
             output = output[:hashtag['indices'][0]] + output[hashtag['indices'][1]:]
-        for mention in self.mentions:
+        for mention in self.user_mentions:
             output = output[:mention['indices'][0]] + output[mention['indices'][1]:]
         return output
     def getAfterTag(self, hashtag):
