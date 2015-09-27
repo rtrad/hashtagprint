@@ -130,7 +130,6 @@ class PrintServer():
         print 'printing image...'
         for i in range(0,copies):
             filename = tempfile.mktemp ("-img.jpg")
-            filename2 = tempfile.mktemp ("-img.bmp")
             r = requests.get(img_url, stream=True)
             with open(filename, 'wb+') as handle:
                 response = requests.get(img_url, stream=True)
@@ -139,8 +138,40 @@ class PrintServer():
                 for block in response.iter_content(1024):
                     handle.write(block)
             time.sleep(5)
-            Image.open(filename).save('temp.bmp')
-            win32api.ShellExecute (0,"printto",'temp.bmp','"{0}"'.format(config.printer_name),".",0)
+
+            HORZRES = 8
+            VERTRES = 10
+            LOGPIXELSX = 88
+            LOGPIXELSY = 90
+            PHYSICALWIDTH = 110
+            PHYSICALHEIGHT = 111
+            PHYSICALOFFSETX = 112
+            PHYSICALOFFSETY = 113
+
+            printer_name = config.printer_name
+            hDC = win32ui.CreateDC ()
+            hDC.CreatePrinterDC (printer_name)
+            printable_area = hDC.GetDeviceCaps (HORZRES), hDC.GetDeviceCaps (VERTRES)
+            printer_size = hDC.GetDeviceCaps (PHYSICALWIDTH), hDC.GetDeviceCaps (PHYSICALHEIGHT)
+            printer_margins = hDC.GetDeviceCaps (PHYSICALOFFSETX), hDC.GetDeviceCaps (PHYSICALOFFSETY)
+            bmp = Image.open (filename)
+            if bmp.size[0] > bmp.size[1]:
+              bmp = bmp.rotate (90)
+
+            ratios = [1.0 * printable_area[0] / bmp.size[0], 1.0 * printable_area[1] / bmp.size[1]]
+            scale = min (ratios)
+            hDC.StartDoc (filename)
+            hDC.StartPage ()
+            dib = ImageWin.Dib (bmp)
+            scaled_width, scaled_height = [int (scale * i) for i in bmp.size]
+            x1 = int ((printer_size[0] - scaled_width) / 2)
+            y1 = int ((printer_size[1] - scaled_height) / 2)
+            x2 = x1 + scaled_width
+            y2 = y1 + scaled_height
+            dib.draw (hDC.GetHandleOutput (), (x1, y1, x2, y2))
+            hDC.EndPage ()
+            hDC.EndDoc ()
+            hDC.DeleteDC ()
         return
 
     def load_users(self, users_file):
