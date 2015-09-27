@@ -11,6 +11,7 @@ import time
 import win32api
 import win32ui
 import pdfkit
+import time
 from PIL import Image, ImageWin
 
 
@@ -132,6 +133,8 @@ class PrintServer():
             filename = tempfile.mktemp ("-raw.txt")
             open (filename, "w").write (post.getUntaggedText('raw'))
             win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
+        params = {'status':'{1} @{0}, your document was sent to the printer at {2}'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)), time.time)}
+        requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
         return
 
     def _print_img(self, post, copies, img_url):
@@ -179,6 +182,8 @@ class PrintServer():
             hDC.EndPage ()
             hDC.EndDoc ()
             hDC.DeleteDC ()
+        params = {'status':'{1} @{0}, your document was sent to the printer at {2}'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)), time.time)}
+        requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
         return
 
     def _print_web(self, url, copies):
@@ -187,6 +192,8 @@ class PrintServer():
         pdfkit.from_url(url, filename)
         for i in range(0,copies):
             win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
+        params = {'status':'{1} @{0}, your document was sent to the printer at {2}'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)), time.time)}
+        requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
         return
         
     def load_users(self, users_file):
