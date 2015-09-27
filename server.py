@@ -58,10 +58,14 @@ class PrintServer():
         return
 
     def _help(self, sender):
-        params1 = {'status':'@{0}, #print creates a new print job; use #raw, #pdf, #img, or #web to specify the doc type; #copy specifies number of copies (must be the LAST argument)'.format(sender)}
-        params2 = {'status':'@{0}, #grant gives print access to anyone mentioned; #revoke revokes access to anyone mentioned'.format(sender)}
-        stream = requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params1)
-        stream = requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params2)
+        if sender.lower() == config.super_sender:
+            params1 = {'status':'@{0}, #print creates a new print job; use #raw, #pdf, #img, or #web to specify the doc type; #copy specifies number of copies (must be the LAST argument)'.format(sender)}
+            params2 = {'status':'@{0}, #grant gives print access to anyone mentioned; #revoke revokes access to anyone mentioned'.format(sender)}
+            stream = requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params1)
+            stream = requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params2)
+        else:
+            params1 = {'status':'@{0}, #print creates a new print job; use #raw, #pdf, #img, or #web to specify the doc type; #copy specifies number of copies (must be the LAST argument)'.format(sender)}
+            stream = requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params1)
         print 'sent help data to {0}'.format(sender)
         return
         
