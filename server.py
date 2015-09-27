@@ -108,8 +108,8 @@ class PrintServer():
     
     def _print_raw(self, post, copies):
         print 'printing raw text...'
-        hPrinter = win32print.OpenPrinter(config.printer_name)
         for i in range(0,copies):
+            hPrinter = win32print.OpenPrinter(config.printer_name)
             try:
                 hJob = win32print.StartDocPrinter (hPrinter, 1, ("test of raw data", None, "RAW"))
                 try:
