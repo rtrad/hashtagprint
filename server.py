@@ -1,7 +1,6 @@
 import config
 import json
 import requests
-import thread
 import random
 import string
 from requests_oauthlib import OAuth1
@@ -11,7 +10,6 @@ import time
 import win32api
 import win32ui
 import pdfkit
-import time
 from PIL import Image, ImageWin
 
 
@@ -133,7 +131,7 @@ class PrintServer():
             filename = tempfile.mktemp ("-raw.txt")
             open (filename, "w").write (post.getUntaggedText('raw'))
             win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
-        params = {'status':'{1} @{0}, your document was sent to the printer at {2}'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)), time.time)}
+        params = {'status':'{1} @{0}, your document was sent to the printer'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))}
         requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
         return
 
@@ -182,7 +180,7 @@ class PrintServer():
             hDC.EndPage ()
             hDC.EndDoc ()
             hDC.DeleteDC ()
-        params = {'status':'{1} @{0}, your document was sent to the printer at {2}'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)), time.time)}
+        params = {'status':'{1} @{0}, your document was sent to the printer'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))}
         requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
         return
 
@@ -203,7 +201,7 @@ class PrintServer():
                 for block in response.iter_content(1024):
                     handle.write(block)
             win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
-        params = {'status':'{1} @{0}, your document was sent to the printer at {2}'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)), time.time)}
+        params = {'status':'{1} @{0}, your document was sent to the printer'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))}
         requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
         return
         
