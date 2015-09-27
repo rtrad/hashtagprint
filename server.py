@@ -111,8 +111,8 @@ class PrintServer():
     def _print_raw(self, post, copies):
         print 'printing raw text...'
         for i in range(0,copies):
-            filename = tempfile.mktemp ("raw.txt")
-            open (filename, "w").write (post.getUntaggedText())
+            filename = tempfile.mktemp ("-raw.txt")
+            open (filename, "w").write (post.getUntaggedText('raw'))
             win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
         return
 
@@ -168,15 +168,14 @@ class Post():
         return self.user_mentions
     def getUrls(self):
         return self.urls
-    def getUntaggedText(self):
+    def getUntaggedText(self, hashtag):
         output = self.text
         for tag in self.hashtags:
             if tag['text'] == 'copy':
                 output = output[:tag['indices'][0]]
-        for hashtag in self.hashtags:
-            output = output[:hashtag['indices'][0]] + output[hashtag['indices'][1]:]
-        for mention in self.user_mentions:
-            output = output[:mention['indices'][0]] + output[mention['indices'][1]:]
+        for tag in self.hashtags:
+            if tag['text'] == hashtag:
+                output = output[tag['indices'][1]:]
         return output
     def getAfterTag(self, hashtag):
         for tag in self.hashtags:
