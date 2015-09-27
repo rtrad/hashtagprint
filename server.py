@@ -74,7 +74,7 @@ class PrintServer():
                 return
             elif 'web' in hashtags:
                 if 'entities' in post.getRaw() and 'urls' in post.getRaw()['entities']:
-                    print post.getRaw()['entities']['urls'][0]['display_url']
+                    print post.getRaw()['entities']['urls'][0]['expanded_url']
                     self._print_web(post.getRaw()['entities']['urls'][0]['display_url'])
                 else:
                     params = {'status':'{1} @{0}, you must include a url for #web'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))}
