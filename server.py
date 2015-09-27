@@ -56,7 +56,7 @@ class PrintServer():
                     params = {'status':'{1} @{0}, text after #copy must be an integer number'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))}
                     requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
             if 'raw' in hashtags:
-                _print_raw(post, copies)
+                self._print_raw(post, copies)
             #'pdf' in hashtags and 'img' in hashtag and 'web' in 
         return
 
