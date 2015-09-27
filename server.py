@@ -189,6 +189,7 @@ class PrintServer():
     def _print_web(self, url, copies):
         print 'printing webpage...'
         filename = tempfile.mktemp('web.pdf')
+        print url
         if '.pdf' not in url:
             pdfkit.from_url(url, filename)
             for i in range(0,copies):
