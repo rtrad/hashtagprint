@@ -109,17 +109,9 @@ class PrintServer():
     def _print_raw(self, post, copies):
         print 'printing raw text...'
         for i in range(0,copies):
-            hPrinter = win32print.OpenPrinter(config.printer_name)
-            try:
-                hJob = win32print.StartDocPrinter (hPrinter, 1, (bytes("test of raw data", "utf-8"), None, "RAW"))
-                try:
-                    win32print.StartPagePrinter (hPrinter)
-                    win32print.WritePrinter (hPrinter, post.getUntaggedText())
-                    win32print.EndPagePrinter (hPrinter)
-                finally:
-                    win32print.EndDocPrinter (hPrinter)
-            finally:
-                win32print.ClosePrinter(hPrinter)
+            filename = tempfile.mktemp ("raw.txt")
+            open (filename, "w").write (post.getUntaggedText())
+            win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
         return
 
     def load_users(self, users_file):
