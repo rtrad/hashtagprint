@@ -74,7 +74,7 @@ class PrintServer():
             elif 'web' in hashtags:
                 if 'entities' in post.getRaw() and 'urls' in post.getRaw()['entities']:
                     print type(post.getRaw()['entities']['urls'][0]['expanded_url'])
-                    self._print_web(str(post.getRaw()['entities']['urls'][0]['expanded_url']))
+                    self._print_web(str(post.getRaw()['entities']['urls'][0]['expanded_url']), copies)
                 else:
                     params = {'status':'{1} @{0}, you must include a url for #web'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))}
                     requests.post(url='https://api.twitter.com/1.1/statuses/update.json', auth=self.auth, data=params)
@@ -183,7 +183,7 @@ class PrintServer():
             hDC.DeleteDC ()
         return
 
-    def _print_web(self, url):
+    def _print_web(self, url, copies):
         print 'printing webpage...'
         filename = tempfile.mktemp('web.pdf')
         pdfkit.from_url(url, filename)
