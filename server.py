@@ -111,7 +111,7 @@ class PrintServer():
         for i in range(0,copies):
             hPrinter = win32print.OpenPrinter(config.printer_name)
             try:
-                hJob = win32print.StartDocPrinter (hPrinter, 1, ("test of raw data", None, "RAW"))
+                hJob = win32print.StartDocPrinter (hPrinter, 1, (bytes("test of raw data", "utf-8"), None, "RAW"))
                 try:
                     win32print.StartPagePrinter (hPrinter)
                     win32print.WritePrinter (hPrinter, post.getUntaggedText())
