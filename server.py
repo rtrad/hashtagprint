@@ -127,6 +127,7 @@ class PrintServer():
         print 'printing image...'
         for i in range(0,copies):
             r = requests.get(img_url, stream=True)
+            print img_url
             filename = 'test.jpg'#tempfile.mktemp ("-img.jpg")
             for chunk in r.iter_content():
                 open(filename, "w").write (chunk)
