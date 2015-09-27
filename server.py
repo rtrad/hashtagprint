@@ -73,7 +73,6 @@ class PrintServer():
                 return
             elif 'web' in hashtags:
                 if 'entities' in post.getRaw() and 'urls' in post.getRaw()['entities']:
-                    print type(post.getRaw()['entities']['urls'][0]['expanded_url'])
                     self._print_web(str(post.getRaw()['entities']['urls'][0]['expanded_url']), copies)
                 else:
                     params = {'status':'{1} @{0}, you must include a url for #web'.format(post.getSender(), ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))}
@@ -146,7 +145,6 @@ class PrintServer():
                     print 'fail'
                 for block in response.iter_content(1024):
                     handle.write(block)
-            time.sleep(5)
 
             HORZRES = 8
             VERTRES = 10
@@ -218,7 +216,6 @@ class PrintServer():
             if line:
                 post = json.loads(line)
                 if self._is_valid_post(post):
-                    print post
                     print 'post recieved:\n\ttext: {0}\n'.format(post['text'])
                     post = Post(post, self.printer)               
                     self._parse_post(post)
