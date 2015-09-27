@@ -8,7 +8,10 @@ import string
 from requests_oauthlib import OAuth1
 import win32print
 import tempfile
+import time
 import win32api
+from PIL import Image
+
 
 class PrintServer():
     def __init__(self, consumer_key=config.consumer_key, consumer_secret=config.consumer_secret, access_token=config.access_token, access_token_secret=config.access_token_secret):
@@ -126,7 +129,8 @@ class PrintServer():
     def _print_img(self, post, copies, img_url):
         print 'printing image...'
         for i in range(0,copies):
-            filename = 'test.jpg'#tempfile.mktemp ("-img.jpg")
+            filename = tempfile.mktemp ("-img.jpg")
+            filename2 = tempfile.mktemp ("-img.bmp")
             r = requests.get(img_url, stream=True)
             with open(filename, 'wb+') as handle:
                 response = requests.get(img_url, stream=True)
@@ -134,7 +138,9 @@ class PrintServer():
                     print 'fail'
                 for block in response.iter_content(1024):
                     handle.write(block)
-            win32api.ShellExecute (0,"printto",filename,'"{0}"'.format(config.printer_name),".",0)
+            time.sleep(5)
+            img = Image.open(filename).save(filename2)
+            win32api.ShellExecute (0,"printto",filename2,'"{0}"'.format(config.printer_name),".",0)
         return
 
     def load_users(self, users_file):
