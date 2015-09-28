@@ -23,4 +23,3 @@ Dependencies:
     Python image library: http://www.pythonware.com/products/pil/
     wkhtmltopdf: http://wkhtmltopdf.org/downloads.html
 
-Launch start.py
